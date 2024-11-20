@@ -78,9 +78,9 @@ try:
 
             # 결과 가져오기
             results = cursor.fetchall()
-            print("Query Results:")
+            print("\nQuery Results:")
             for row in results:
-                print(row)
+                print(f"ID: {row[0]}, Title: {row[1]}, Date Added: {row[2].strftime('%Y-%m-%d %H:%M:%S')}")
 
         # 데이터 조회(IOS-XR) 
         elif os_selector == '2':
@@ -94,44 +94,57 @@ try:
             for row in results:
                 print(row)
 
-
-
-    # 데이터 추가 기능
+    # 데이터 추가 기능(기능 구현 중)
     elif function_selector == '2':
-        print("\n데이터 추가 모드를 실행합니다.")
+        print("\n데이터 추가를 위해 입력 모드를 실행합니다.")
         print("\n##### 입력 모드 실행 중(아래에 입력 해 주세요). #####")
         print("* exit를 입력하면 입력 모드를 종료합니다. *")
 
         while True:
             log_list.append(input("> "))
-            if log_list[-1] == "exit":
+            if log_list[-1] != "exit":
+                if os_selector == "1":
+                    query = "INSERT IGNORE INTO ios (title) VALUES (%s);"
+                    cursor.execute(query, (log_list[-1],))
+                    print(log_list[-1])
+                if os_selector == "2":
+                    query = "INSERT IGNORE INTO iosxr (title) VALUES (%s);"
+                    cursor.execute(query, (log_list[-1],))
+                    print(log_list[-1])
+            elif log_list[-1] == "exit":
                 log_list.pop()
                 break
 
     # 데이터 삭제 기능
-    elif function_selector == '3':
-        # ID 재정렬
-        print("Resetting AUTO_INCREMENT values...")
-        
-        # 1단계: AUTO_INCREMENT 값 재설정
-        cursor.execute("ALTER TABLE iosxr AUTO_INCREMENT = 1;")
-        
-        # 2단계: ID 컬럼 값 재정렬
-        cursor.execute("SET @COUNT = 0;")
-        cursor.execute("UPDATE iosxr SET id = @COUNT:= @COUNT + 1;")
+    #elif function_selector == '3':
 
-        # 변경 사항 저장
-        conn.commit()
-        print("AUTO_INCREMENT values reset successfully.")
     else:
         pass
 
 
 except pymysql.MySQLError as e:
-    print(f"Error occurred: {e}")
+    print(f"\nError occurred: {e}")
+    print("DB와 연결이 실패했습니다. 확인해주세요.")
 
 finally:
+    # ID 재정렬
+    print("\nResetting AUTO_INCREMENT values...")
+        
+    # 1단계: AUTO_INCREMENT 값 재설정
+    cursor.execute("ALTER TABLE iosxr AUTO_INCREMENT = 1;")
+    cursor.execute("ALTER TABLE ios AUTO_INCREMENT = 1;")
+        
+    # 2단계: ID 컬럼 값 재정렬
+    cursor.execute("SET @COUNT = 0;")
+    cursor.execute("UPDATE iosxr SET id = @COUNT:= @COUNT + 1;")
+    cursor.execute("SET @COUNT = 0;")
+    cursor.execute("UPDATE ios SET id = @COUNT:= @COUNT + 1;")
+
+    # 변경 사항 저장
+    print("AUTO_INCREMENT values reset successfully.")
+
     # 커서 및 연결 닫기
+    conn.commit()
     if 'cursor' in locals() and cursor:
         cursor.close()
     if 'conn' in locals() and conn:
