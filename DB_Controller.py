@@ -12,9 +12,11 @@ print("----------------------------------------------------------")
 
 print("Press Enter to Continue")
 
-function_selector = ''
-os_selector = ''
-log_list = list()
+function_selector = ''  # 기능 선택 변수
+os_selector = ''        # 운영체제 선택 변수
+log_list = list()       # 로그 리스트 (사용자 입력 저장용)
+query = ''              # SQL 쿼리 문자열 변수
+results = []            # SQL 쿼리 결과 저장 리스트
 
 while True:
     key = msvcrt.getch()  # 키 입력 대기
