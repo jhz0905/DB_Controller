@@ -1,4 +1,4 @@
-import pymysql, msvcrt
+import pymysql, msvcrt, re
 
 print("----------------------------------------------------------")
 print("|                               Last Update 2024. 11. 20 |")
@@ -17,6 +17,8 @@ os_selector = ''        # 운영체제 선택 변수
 log_list = list()       # 로그 리스트 (사용자 입력 저장용)
 query = ''              # SQL 쿼리 문자열 변수
 results = []            # SQL 쿼리 결과 저장 리스트
+iosxr_log_pattern = r"^%\w+-\w+-\d-\w+$"     #log pattern
+ios_log_pattern = r"^%\w+-\d-\w+$"     #log pattern
 
 while True:
     key = msvcrt.getch()  # 키 입력 대기
@@ -96,7 +98,7 @@ try:
             for row in results:
                 print(row)
 
-    # 데이터 추가 기능(기능 구현 중)
+    # 데이터 추가 기능
     elif function_selector == '2':
         print("\n데이터 추가를 위해 입력 모드를 실행합니다.")
         print("\n##### 입력 모드 실행 중(아래에 입력 해 주세요). #####")
@@ -104,22 +106,33 @@ try:
 
         while True:
             log_list.append(input("> "))
+
             if log_list[-1] != "exit":
                 if os_selector == "1":
-                    query = "INSERT IGNORE INTO ios (title) VALUES (%s);"
-                    cursor.execute(query, (log_list[-1],))
-                    print(log_list[-1])
+                    if not re.match(ios_log_pattern, log_list[-1]):
+                        print("입력한 문자열이 유효하지 않습니다. 형식: %문자-숫자-문자")
+                        log_list.pop()  # 잘못된 입력 제거
+                    else:    
+                        query = "INSERT IGNORE INTO ios (title) VALUES (%s);"
+                        cursor.execute(query, (log_list[-1],))
+                        print(log_list[-1])
                 if os_selector == "2":
-                    query = "INSERT IGNORE INTO iosxr (title) VALUES (%s);"
-                    cursor.execute(query, (log_list[-1],))
-                    print(log_list[-1])
+                    if not re.match(iosxr_log_pattern, log_list[-1]):
+                        print("입력한 문자열이 유효하지 않습니다. 형식: %문자-문자-숫자-문자")
+                        log_list.pop()  # 잘못된 입력 제거
+                    else:    
+                        query = "INSERT IGNORE INTO iosxr (title) VALUES (%s);"
+                        cursor.execute(query, (log_list[-1],))
+                        print(log_list[-1])
+
             elif log_list[-1] == "exit":
                 log_list.pop()
                 break
 
-    # 데이터 삭제 기능
-    #elif function_selector == '3':
-
+    # 데이터 삭제 기능(기능 구현 중)
+    elif function_selector == '3':
+        pass
+    
     else:
         pass
 
