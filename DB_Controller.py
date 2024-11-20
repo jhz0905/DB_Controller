@@ -105,6 +105,7 @@ try:
         print("* exit를 입력하면 입력 모드를 종료합니다. *")
 
         while True:
+            qurey_title = ''
             log_list.append(input("> "))
 
             if log_list[-1] != "exit":
@@ -114,16 +115,16 @@ try:
                         log_list.pop()  # 잘못된 입력 제거
                     else:    
                         query = "INSERT IGNORE INTO ios (title) VALUES (%s);"
-                        cursor.execute(query, (log_list[-1],))
-                        print(log_list[-1])
+                        query_title = re.match(ios_log_pattern, log_list[-1]).group()
+                        cursor.execute(query, (query_title,))
                 if os_selector == "2":
                     if not re.match(iosxr_log_pattern, log_list[-1]):
                         print("입력한 문자열이 유효하지 않습니다. 형식: %문자-문자-숫자-문자")
                         log_list.pop()  # 잘못된 입력 제거
                     else:    
                         query = "INSERT IGNORE INTO iosxr (title) VALUES (%s);"
-                        cursor.execute(query, (log_list[-1],))
-                        print(log_list[-1])
+                        query_title = re.match(iosxr_log_pattern, log_list[-1]).group()
+                        cursor.execute(query, (query_title,))
 
             elif log_list[-1] == "exit":
                 log_list.pop()
@@ -132,7 +133,7 @@ try:
     # 데이터 삭제 기능(기능 구현 중)
     elif function_selector == '3':
         pass
-    
+
     else:
         pass
 
