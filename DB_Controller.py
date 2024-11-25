@@ -18,8 +18,8 @@ os_selector = ''        # 운영체제 선택 변수
 log_list = list()       # 로그 리스트 (사용자 입력 저장용)
 query = ''              # SQL 쿼리 문자열 변수
 results = []            # SQL 쿼리 결과 저장 리스트
-iosxr_log_pattern = r"^%\w+-\w+-\d-\w+$"     #log pattern
-ios_log_pattern = r"^%\w+-\d-\w+$"     #log pattern
+iosxr_log_pattern = r"%\w+-\w+-\d-\w+"     #log pattern
+ios_log_pattern = r"%\w+-\d-\w+"     #log pattern
 
 if os.name == 'nt': #windows 환경
     while True:
@@ -126,20 +126,20 @@ try:
 
             if log_list[-1] != "exit":
                 if os_selector == "1":
-                    if not re.match(ios_log_pattern, log_list[-1]):
+                    if not re.search(ios_log_pattern, log_list[-1]):
                         print("입력한 문자열이 유효하지 않습니다. 형식: %문자-숫자-문자")
                         log_list.pop()  # 잘못된 입력 제거
                     else:    
                         query = "INSERT IGNORE INTO ios (title) VALUES (%s);"
-                        query_title = re.match(ios_log_pattern, log_list[-1]).group()
+                        query_title = re.search(ios_log_pattern, log_list[-1]).group()
                         cursor.execute(query, (query_title,))
                 if os_selector == "2":
-                    if not re.match(iosxr_log_pattern, log_list[-1]):
+                    if not re.search(iosxr_log_pattern, log_list[-1]):
                         print("입력한 문자열이 유효하지 않습니다. 형식: %문자-문자-숫자-문자")
                         log_list.pop()  # 잘못된 입력 제거
                     else:    
                         query = "INSERT IGNORE INTO iosxr (title) VALUES (%s);"
-                        query_title = re.match(iosxr_log_pattern, log_list[-1]).group()
+                        query_title = re.search(iosxr_log_pattern, log_list[-1]).group()
                         cursor.execute(query, (query_title,))
 
             elif log_list[-1] == "exit":
