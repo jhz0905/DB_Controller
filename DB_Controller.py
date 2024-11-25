@@ -1,4 +1,5 @@
-import pymysql, msvcrt, re
+import pymysql, msvcrt, re, os, sys
+import curses # noqa
 
 print("----------------------------------------------------------")
 print("|                               Last Update 2024. 11. 20 |")
@@ -20,16 +21,31 @@ results = []            # SQL 쿼리 결과 저장 리스트
 iosxr_log_pattern = r"^%\w+-\w+-\d-\w+$"     #log pattern
 ios_log_pattern = r"^%\w+-\d-\w+$"     #log pattern
 
-while True:
-    key = msvcrt.getch()  # 키 입력 대기
-    if key == b'\r':  # Enter 키 감지 (b'\r'은 엔터 키)
-        print("initializing...")
-        print("\n")
-        print("\n")
-        print("\n")
-        break
-    else:
-        print("Please press Enter")
+if os.name == 'nt': #windows 환경
+    while True:
+            key = msvcrt.getch()  # 키 입력 대기
+            if key == b'\r':  # Enter 키 감지 (b'\r'은 엔터 키)
+                print("initializing...")
+                print("\n")
+                print("\n")
+                print("\n")
+                break
+            else:
+                print("Please press Enter")
+else:
+    def main(stdscr):
+        stdscr.clear()
+        stdscr.addstr("Please press 'Enter' to continue.\n")
+        while True:
+            key = stdscr.getch()  # 키 입력 대기
+            if key == 10:  # Enter 키의 ASCII 코드
+                stdscr.addstr("initializing...\n\n\n")
+                stdscr.refresh()
+                break
+            else:
+                stdscr.addstr("Please press Enter\n")
+                stdscr.refresh()
+    curses.wrapper(main)
 
 print("----------------------------------------------------------")
 print("|                       [ 1 ] 조회                       |")
