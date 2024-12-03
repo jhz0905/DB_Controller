@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 
 # Flask 애플리케이션 생성
 app = Flask(__name__)
