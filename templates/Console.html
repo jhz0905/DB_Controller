@@ -15,7 +15,6 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            overflow: hidden;
         }
         .console {
             width: 80%;
@@ -24,17 +23,8 @@
             padding: 10px;
             overflow-y: auto;
         }
-        .console div {
-            margin: 2px 0;
-        }
-        .input-line {
-            display: flex;
-        }
-        .input-line span {
-            margin-right: 5px;
-        }
-        .input-line input {
-            flex: 1;
+        .console-input {
+            width: 100%;
             border: none;
             background: none;
             color: #00ff00;
@@ -46,12 +36,9 @@
 </head>
 <body>
     <div class="console" id="console">
-        <div>Welcome to the Console. Type 'hello' or 'date' to test the backend API.</div>
-        <div class="input-line">
-            <span>&gt;</span>
-            <input type="text" id="consoleInput" autofocus>
-        </div>
+        <div>Welcome to the Console. Type 'hello' or 'date'.</div>
     </div>
+    <input type="text" class="console-input" id="consoleInput" autofocus placeholder="Type a command...">
 
     <script>
         const consoleDiv = document.getElementById('console');
@@ -62,11 +49,10 @@
             if (event.key === 'Enter') {
                 const command = consoleInput.value.trim();
                 if (command) {
-                    // Add user command to the console
                     addConsoleMessage(`> ${command}`);
                     consoleInput.value = '';
 
-                    // Send command to Flask backend
+                    // Send command to backend
                     try {
                         const response = await fetch('/api/command', {
                             method: 'POST',
@@ -75,12 +61,12 @@
                         });
                         const data = await response.json();
                         if (response.ok) {
-                            addConsoleMessage(data.response); // Show backend response
+                            addConsoleMessage(data.response);
                         } else {
                             addConsoleMessage(`Error: ${data.error}`);
                         }
                     } catch (err) {
-                        addConsoleMessage(`Error: Unable to connect to the server.`);
+                        addConsoleMessage(`Error: Failed to connect to server.`);
                     }
                 }
             }
@@ -90,9 +76,8 @@
         function addConsoleMessage(message) {
             const div = document.createElement('div');
             div.textContent = message;
-            const inputLine = document.querySelector('.input-line');
-            consoleDiv.insertBefore(div, inputLine); // Add new message above input line
-            consoleDiv.scrollTop = consoleDiv.scrollHeight; // Auto-scroll to the bottom
+            consoleDiv.appendChild(div);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight; // Auto-scroll
         }
     </script>
 </body>
