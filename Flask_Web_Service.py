@@ -6,7 +6,7 @@ app = Flask(__name__)
 # 첫 번째 라우트 생성
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return template('Console.html')
 
 
 # 웹 서버 실행
