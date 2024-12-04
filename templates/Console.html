@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Console UI</title>
+    <title>Console</title>
     <style>
         body {
-            background-color: #1e1e1e;
-            color: #00ff00;
-            font-family: monospace;
+            background-color: #0a1a2a; /* 어두운 블루 배경 */
+            color: #ffdd00; /* 연한 노란 텍스트 */
+            font-family: "Courier New", monospace;
             margin: 0;
             padding: 0;
             display: flex;
@@ -20,10 +20,11 @@
         .console {
             width: 80%;
             height: 80%;
-            border: 1px solid #00ff00;
+            border: 2px solid #ffdd00; /* 연한 노란 테두리 */
             padding: 10px;
             overflow-y: auto;
             white-space: pre-wrap;
+            box-shadow: 0 0 20px #ffdd00; /* 네온 효과 */
         }
         .input-line {
             display: flex;
@@ -35,8 +36,8 @@
             flex: 1;
             border: none;
             background: none;
-            color: #00ff00;
-            font-family: monospace;
+            color: #ffdd00; /* 연한 노란 텍스트 */
+            font-family: "Courier New", monospace;
             font-size: 16px;
             outline: none;
         }
@@ -44,7 +45,7 @@
 </head>
 <body>
     <div class="console" id="console">
-        <div>Welcome to the Console! Type 'hello' or 'date' to get started.</div>
+        <div>Welcome to the Retro Console! Type 'hello' or 'date' to get started.</div>
     </div>
 
     <script>
