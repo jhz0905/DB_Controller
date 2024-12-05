@@ -25,12 +25,16 @@ def run_db_controller():
             text=True
         )
 
-        # 실행 결과 처리
+        # 디버그 출력
+        print("STDOUT:", process.stdout)
+        print("STDERR:", process.stderr)
+
         if process.returncode != 0:
-            return f"Error in DB_Controller: <pre>{process.stderr}</pre>", 500
-        return f"DB_Controller Output: <pre>{process.stdout}</pre>", 200
+            return f"Error in DB_Controller: <pre>{process.stderr or 'No error message'}</pre>", 500
+        return f"DB_Controller Output: <pre>{process.stdout or 'No output generated'}</pre>", 200
+    except subprocess.TimeoutExpired:
+        return "Error: DB_Controller.py execution timed out.", 500
     except Exception as e:
-        # Flask 터미널에 예외 출력
         traceback.print_exc()
         return f"Unexpected error: {str(e)}", 500
 
