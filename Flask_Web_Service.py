@@ -29,7 +29,7 @@ def run_db_controller():
             ["python", script_path],
             capture_output=True,
             text=True,
-            env=env
+            env=env,
             timeout = 30
         )
 
