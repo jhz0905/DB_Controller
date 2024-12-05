@@ -93,19 +93,22 @@
         // Handle user command
         async function handleCommand(command) {
             try {
-                const response = await fetch('/api/command', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ command })
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    addConsoleMessage(data.response); // Show backend response
+                if (command === 'start') {
+                    // Send request to run DB_Controller
+                    const response = await fetch('/run_db_controller', {
+                        method: 'POST',
+                    });
+                    if (response.ok) {
+                        const text = await response.text();
+                        addConsoleMessage(text); // Show backend response
+                    } else {
+                        addConsoleMessage(`Error: Failed to execute command. Status: ${response.status}`);
+                    }
                 } else {
-                    addConsoleMessage(`Error: ${data.error}`);
+                    addConsoleMessage(`Unknown command: "${command}"`);
                 }
             } catch (err) {
-                addConsoleMessage('Error: Unable to connect to server.');
+                addConsoleMessage('Error: Unable to connect to the server.');
             }
         }
 
