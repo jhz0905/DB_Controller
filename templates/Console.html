@@ -6,8 +6,8 @@
     <title>Console</title>
     <style>
         body {
-            background-color: #0a1a2a; /* 어두운 블루 배경 */
-            color: #ffdd00; /* 연한 노란 텍스트 */
+            background-color: #0a1a2a;
+            color: #ffdd00;
             font-family: "Courier New", monospace;
             margin: 0;
             padding: 0;
@@ -20,11 +20,11 @@
         .console {
             width: 80%;
             height: 80%;
-            border: 2px solid #ffdd00; /* 연한 노란 테두리 */
+            border: 2px solid #ffdd00;
             padding: 10px;
             overflow-y: auto;
             white-space: pre-wrap;
-            box-shadow: 0 0 20px #ffdd00; /* 네온 효과 */
+            box-shadow: 0 0 20px #ffdd00;
         }
         .input-line {
             display: flex;
@@ -36,7 +36,7 @@
             flex: 1;
             border: none;
             background: none;
-            color: #ffdd00; /* 연한 노란 텍스트 */
+            color: #ffdd00;
             font-family: "Courier New", monospace;
             font-size: 16px;
             outline: none;
@@ -45,14 +45,31 @@
 </head>
 <body>
     <div class="console" id="console">
-        <div>Welcome to the DB Controller! Type "start" to get started.</div>
+        <div>Welcome to the DB Controller! Please enter the desired action.</div>
     </div>
 
     <script>
         const consoleDiv = document.getElementById('console');
 
-        // Add an input line dynamically
-        function addInputLine() {
+        let step = 0; // 입력 단계 (0: function_selector, 1: os_selector)
+        let function_selector = ""; // 첫 번째 입력 저장
+        let os_selector = ""; // 두 번째 입력 저장
+
+        // 콘솔에 메시지를 추가
+        function addConsoleMessage(message) {
+            const div = document.createElement('div');
+            div.textContent = message;
+            consoleDiv.appendChild(div);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight; // 자동 스크롤
+        }
+
+        // 입력 라인을 추가
+        function addInputLine(promptMessage) {
+            // 메시지 출력
+            if (promptMessage) {
+                addConsoleMessage(promptMessage);
+            }
+
             const inputLine = document.createElement('div');
             inputLine.classList.add('input-line');
 
@@ -63,101 +80,63 @@
             const input = document.createElement('input');
             input.type = 'text';
             input.autofocus = true;
+
             input.addEventListener('keydown', async (event) => {
                 if (event.key === 'Enter') {
                     const command = input.value.trim();
                     if (command) {
-                        input.setAttribute('readonly', 'true'); // Prevent further editing
-                        addConsoleMessage(`> ${command}`); // Display command
-                        inputLine.remove(); // Remove old input
-                        await handleCommand(command); // Send command to backend
-                        addInputLine(); // Add new input line
+                        input.setAttribute('readonly', 'true'); // 입력 수정 불가
+                        addConsoleMessage(`> ${command}`); // 입력 표시
+                        inputLine.remove(); // 이전 입력 제거
+                        await handleCommand(command); // 입력 처리
                     }
                 }
             });
-            inputLine.appendChild(input);
 
+            inputLine.appendChild(input);
             consoleDiv.appendChild(inputLine);
             input.focus();
-            consoleDiv.scrollTop = consoleDiv.scrollHeight; // Auto-scroll
+            consoleDiv.scrollTop = consoleDiv.scrollHeight; // 자동 스크롤
         }
 
-        // Add a message to the console
-        function addConsoleMessage(message) {
-            const div = document.createElement('div');
-            div.textContent = message;
-            consoleDiv.appendChild(div);
-            consoleDiv.scrollTop = consoleDiv.scrollHeight; // Auto-scroll
-        }
-
-        // Handle user command
+        // 명령 처리
         async function handleCommand(command) {
-            try {
-                if (command === 'start') {
-                    // Send request to run DB_Controller
-                    const response = await fetch('/run_db_controller', {
-                        method: 'POST',
-                    });
-                    if (response.ok) {
-                        const text = await response.text();
-                        addConsoleMessage(text); // Show backend response
-                    } else {
-                        addConsoleMessage(`Error: Failed to execute command. Status: ${response.status}`);
-                    }
-                } else {
-                    addConsoleMessage(`Unknown command: "${command}"`);
-                }
-            } catch (err) {
-                addConsoleMessage('Error: Unable to connect to the server.');
-            }
-        }
-
-        // Initialize the console with an input line
-        addInputLine();
-    </script>
-</body>
-</html>
-<script>
-    async function handleCommand(command) {
-        let step = 0;
-        let function_selector = ""; // 첫 번째 입력값 저장
-        let os_selector = ""; // 두 번째 입력값 저장
-
-        try {
             if (step === 0) {
-                addInputLine('Please enter the OS selector (1 for IOS, 2 for IOS-XR):');
-                function_selector = command; // 첫 번째 입력값 저장
+                function_selector = command; // 첫 번째 입력 저장
                 addConsoleMessage(`Function Selector: ${function_selector}`);
                 step = 1; // 다음 단계로 이동
+                addInputLine('Please enter the OS selector (1 for IOS, 2 for IOS-XR):');
             } else if (step === 1) {
-                os_selector = command; // 두 번째 입력값 저장
+                os_selector = command; // 두 번째 입력 저장
                 addConsoleMessage(`OS Selector: ${os_selector}`);
                 addConsoleMessage('Executing command...');
 
                 // 서버로 데이터 전송
-                const response = await fetch('/run_db_controller', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ function_selector, os_selector }), // JSON 데이터 전송
-                });
+                try {
+                    const response = await fetch('/run_db_controller', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ function_selector, os_selector }),
+                    });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    addConsoleMessage(data.output); // 서버 응답 출력
-                } else {
-                    addConsoleMessage(`Error: Failed to execute command. Status: ${response.status}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        addConsoleMessage(data.output); // 결과 표시
+                    } else {
+                        addConsoleMessage(`Error: Failed to execute command. Status: ${response.status}`);
+                    }
+                } catch (err) {
+                    addConsoleMessage('Error: Unable to connect to the server.');
                 }
 
                 // 초기화
                 step = 0;
-                addInputLine('Please enter the function selector (1 for Query, 2 for Add, 3 for Delete):');
+                addInputLine('Please enter the desired action (1 for Query, 2 for Add, 3 for Delete):');
             }
-        } catch (err) {
-            addConsoleMessage('Error: Unable to connect to the server.');
         }
-    }
-</script>
 
-
-
-
+        // 콘솔 초기화 메시지 출력
+        addInputLine('Please enter the desired action (1 for Query, 2 for Add, 3 for Delete):');
+    </script>
+</body>
+</html>
