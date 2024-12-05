@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-import subprocess
+import subprocess, traceback
 
 # Flask 애플리케이션 생성
 app = Flask(__name__)
@@ -14,17 +14,18 @@ def run_db_controller():
     try:
         # DB_Controller.py 실행
         process = subprocess.run(
-            ["python3", "DB_Controller.py"],
-            capture_output=True,
+            ["python3", "DB_Controller.py"], 
+            capture_output=True, 
             text=True
         )
         if process.returncode != 0:
-            return f"Execution failed: {process.stderr}", 500
+            return f"Error in DB_Controller: <pre>{process.stderr}</pre>", 500
         return f"DB_Controller Output: <pre>{process.stdout}</pre>", 200
-    except FileNotFoundError:
-        return "Error: DB_Controller.py file not found.", 500
     except Exception as e:
-        return f"Error: {str(e)}", 500
+        # 상세한 에러 메시지와 스택 트레이스를 터미널에 출력
+        print("An error occurred while processing the request:")
+        traceback.print_exc()
+        return f"Unexpected error: {str(e)}", 500
 
 # 웹 서버 실행
 if __name__ == "__main__":
