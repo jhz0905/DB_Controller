@@ -1,5 +1,9 @@
-import pymysql, msvcrt, re, os, sys
+import pymysql, msvcrt, re, os, sys, io
 import curses # noqa
+
+# 표준 출력 및 에러 스트림의 인코딩을 UTF-8로 강제 설정
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
 print("----------------------------------------------------------")
 print("|                               Last Update 2024. 11. 20 |")
