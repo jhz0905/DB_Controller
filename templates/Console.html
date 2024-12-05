@@ -117,3 +117,28 @@
     </script>
 </body>
 </html>
+<script>
+    // Handle user command
+    async function handleCommand(command) {
+        try {
+            if (command === 'start') {
+                // Send request to run DB_Controller
+                const response = await fetch('/run_db_controller', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    addConsoleMessage(data.output); // Show backend response
+                } else {
+                    addConsoleMessage(`Error: Failed to execute command. Status: ${response.status}`);
+                }
+            } else {
+                addConsoleMessage(`Unknown command: "${command}"`);
+            }
+        } catch (err) {
+            addConsoleMessage('Error: Unable to connect to the server.');
+        }
+    }
+</script>
+
