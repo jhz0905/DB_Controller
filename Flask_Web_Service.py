@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-import subprocess, traceback
+import subprocess, traceback, os
 
 # Flask 애플리케이션 생성
 app = Flask(__name__)
@@ -12,9 +12,10 @@ def home():
 @app.route('/run_db_controller', methods=['POST'])
 def run_db_controller():
     try:
+        DB_Controller_path = os.path.abspath("DB_Controller.py")
         # DB_Controller.py 실행
         process = subprocess.run(
-            ["python3", "DB_Controller.py"], 
+            ["python3", DB_Controller_path], 
             capture_output=True, 
             text=True
         )
