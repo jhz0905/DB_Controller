@@ -13,11 +13,18 @@ def home():
 def run_db_controller():
     try:
         # DB_Controller.py 실행
-        process = subprocess.run(["python3", "DB_Controller.py"], capture_output=True, text=True)
-        # 결과 출력
+        process = subprocess.run(
+            ["python3", "DB_Controller.py"],
+            capture_output=True,
+            text=True
+        )
+        if process.returncode != 0:
+            return f"Execution failed: {process.stderr}", 500
         return f"DB_Controller Output: <pre>{process.stdout}</pre>", 200
+    except FileNotFoundError:
+        return "Error: DB_Controller.py file not found.", 500
     except Exception as e:
-        return f"Error: {e}", 500
+        return f"Error: {str(e)}", 500
 
 # 웹 서버 실행
 if __name__ == "__main__":
