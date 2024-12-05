@@ -15,7 +15,7 @@ def run_db_controller():
         DB_Controller_path = os.path.abspath("DB_Controller.py")
         # DB_Controller.py 실행
         process = subprocess.run(
-            ["python3", DB_Controller_path], 
+            ["python", DB_Controller_path], 
             capture_output=True, 
             text=True
         )
