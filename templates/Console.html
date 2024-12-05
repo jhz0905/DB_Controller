@@ -125,10 +125,10 @@
 
         try {
             if (step === 0) {
+                addInputLine('Please enter the OS selector (1 for IOS, 2 for IOS-XR):');
                 function_selector = command; // 첫 번째 입력값 저장
                 addConsoleMessage(`Function Selector: ${function_selector}`);
                 step = 1; // 다음 단계로 이동
-                addInputLine('Please enter the OS selector (1 for IOS, 2 for IOS-XR):');
             } else if (step === 1) {
                 os_selector = command; // 두 번째 입력값 저장
                 addConsoleMessage(`OS Selector: ${os_selector}`);
