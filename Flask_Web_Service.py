@@ -30,6 +30,7 @@ def run_db_controller():
             return f"Error in DB_Controller: <pre>{process.stderr}</pre>", 500
         return f"DB_Controller Output: <pre>{process.stdout}</pre>", 200
     except Exception as e:
+        # Flask 터미널에 예외 출력
         traceback.print_exc()
         return f"Unexpected error: {str(e)}", 500
 
