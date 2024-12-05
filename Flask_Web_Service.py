@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-import subprocess, traceback, os, sys, io
+import subprocess, traceback, os,
 
 # Flask 애플리케이션 생성
 app = Flask(__name__)
@@ -11,10 +11,6 @@ def home():
 
 # Flask 애플리케이션 생성 전 현재 작업 디렉토리를 스크립트 위치로 변경
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
-# 표준 출력 및 표준 에러를 UTF-8로 강제 설정
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
 @app.route('/run_db_controller', methods=['POST'])
 def run_db_controller():
@@ -33,17 +29,19 @@ def run_db_controller():
             text=True
         )
 
-        # 디버그 출력
+        # STDOUT과 STDERR 출력
         print("STDOUT:", process.stdout)
         print("STDERR:", process.stderr)
 
         if process.returncode != 0:
-            return f"Error in DB_Controller: <pre>{process.stderr or 'No error message'}</pre>", 500
-        return f"DB_Controller Output: <pre>{process.stdout or 'No output generated'}</pre>", 200
+            return f"Error in DB_Controller: <pre>{process.stderr or 'Unknown error'}</pre>", 500
+        return f"DB_Controller Output: <pre>{process.stdout or 'No output'}</pre>", 200
     except subprocess.TimeoutExpired:
+        print("Error: DB_Controller.py execution timed out.")
         return "Error: DB_Controller.py execution timed out.", 500
     except Exception as e:
-        traceback.print_exc()
+        print("An unexpected error occurred:")
+        traceback.print_exc()  # 터미널에 전체 스택 트레이스를 출력
         return f"Unexpected error: {str(e)}", 500
 
 # 웹 서버 실행
