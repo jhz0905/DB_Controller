@@ -1,4 +1,3 @@
-
 import pymysql, re, sys
 
 print("Step 1: Script started.")
@@ -22,10 +21,16 @@ def execute_db_task(function_selector, os_selector):
             query = "SELECT * FROM ios" if os_selector == '1' else "SELECT * FROM iosxr"
             cursor.execute(query)
             results = cursor.fetchall()
+
+            # 결과를 포맷된 문자열로 가공
+            query_results = "\n".join(
+                f"ID: {row[0]}, Title: {row[1]}, Date Added: {row[2].strftime('%Y-%m-%d %H:%M:%S')}"
+                for row in results
+            )
+
             print("Query Results:")
-            for row in results:
-                print(f"ID: {row[0]}, Title: {row[1]}, Date Added: {row[2].strftime('%Y-%m-%d %H:%M:%S')}")
-            return results
+            print(query_results)  # 터미널 출력용
+            return query_results  # Flask 또는 다른 호출자로 반환
 
         # 데이터 추가 기능
         elif function_selector == '2':
