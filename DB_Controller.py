@@ -30,8 +30,8 @@ def execute_db_task(function_selector, os_selector):
             )
 
             # 터미널에 결과 표시 (원하면 주석 처리 가능)
-            # print("Query Results:")
-            # print(query_results)
+            print("Query Results:")
+            print(query_results)
 
             return query_results  # 클라이언트에 반환
 
