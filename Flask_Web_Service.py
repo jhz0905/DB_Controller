@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-import subprocess, traceback, os,
+import subprocess, traceback, os
 
 # Flask 애플리케이션 생성
 app = Flask(__name__)
