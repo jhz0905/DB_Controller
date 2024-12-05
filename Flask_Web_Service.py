@@ -9,36 +9,29 @@ app = Flask(__name__)
 def home():
     return render_template('Console.html')
 
+# Flask 애플리케이션 생성 전 현재 작업 디렉토리를 스크립트 위치로 변경
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 @app.route('/run_db_controller', methods=['POST'])
 def run_db_controller():
     try:
-        # Flask의 현재 디렉토리 출력
-        print("Current working directory:", os.getcwd())
-        
-        # 절대 경로 확인
+        # 절대 경로로 DB_Controller.py 실행
         script_path = os.path.abspath("DB_Controller.py")
         print("DB_Controller.py path:", script_path)
 
-        # DB_Controller.py 실행
         process = subprocess.run(
             ["python", script_path],
             capture_output=True,
             text=True
         )
 
-        # 실행 결과 출력
-        print("STDOUT:", process.stdout)
-        print("STDERR:", process.stderr)
-
+        # 실행 결과 처리
         if process.returncode != 0:
             return f"Error in DB_Controller: <pre>{process.stderr}</pre>", 500
         return f"DB_Controller Output: <pre>{process.stdout}</pre>", 200
     except Exception as e:
-        # 예외 처리와 디버그 정보 출력
-        print("An error occurred while processing the request:")
         traceback.print_exc()
         return f"Unexpected error: {str(e)}", 500
-
 
 # 웹 서버 실행
 if __name__ == "__main__":
