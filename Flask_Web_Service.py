@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-import subprocess, traceback, os
+import subprocess, traceback, os, sys, io
 
 # Flask 애플리케이션 생성
 app = Flask(__name__)
@@ -12,12 +12,20 @@ def home():
 # Flask 애플리케이션 생성 전 현재 작업 디렉토리를 스크립트 위치로 변경
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+# 표준 출력 및 표준 에러를 UTF-8로 강제 설정
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
 @app.route('/run_db_controller', methods=['POST'])
 def run_db_controller():
     try:
         # 절대 경로로 DB_Controller.py 실행
         script_path = os.path.abspath("DB_Controller.py")
         print("DB_Controller.py path:", script_path)
+
+        # UTF-8 환경 변수 설정
+        env = os.environ.copy()
+        env["PYTHONIOENCODING"] = "utf-8"
 
         process = subprocess.run(
             ["python", script_path],
