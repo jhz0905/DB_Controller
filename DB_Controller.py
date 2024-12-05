@@ -1,3 +1,8 @@
+
+import pymysql, re, sys
+
+print("Step 1: Script started.")
+
 def execute_db_task(function_selector, os_selector):
     try:
         # MySQL에 연결
