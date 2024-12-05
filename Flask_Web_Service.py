@@ -30,6 +30,7 @@ def run_db_controller():
             capture_output=True,
             text=True,
             env=env
+            timeout = 30
         )
 
         # 디버깅 출력: 실행 결과
