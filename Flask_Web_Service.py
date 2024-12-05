@@ -15,7 +15,9 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 @app.route('/run_db_controller', methods=['POST'])
 def run_db_controller():
     try:
-        # 절대 경로로 DB_Controller.py 실행
+        # 디버깅 출력: 현재 작업 디렉토리
+        print("Current working directory:", os.getcwd())
+
         script_path = os.path.abspath("DB_Controller.py")
         print("DB_Controller.py path:", script_path)
 
@@ -26,10 +28,11 @@ def run_db_controller():
         process = subprocess.run(
             ["python", script_path],
             capture_output=True,
-            text=True
+            text=True,
+            env=env
         )
 
-        # STDOUT과 STDERR 출력
+        # 디버깅 출력: 실행 결과
         print("STDOUT:", process.stdout)
         print("STDERR:", process.stderr)
 
@@ -41,8 +44,9 @@ def run_db_controller():
         return "Error: DB_Controller.py execution timed out.", 500
     except Exception as e:
         print("An unexpected error occurred:")
-        traceback.print_exc()  # 터미널에 전체 스택 트레이스를 출력
+        traceback.print_exc()
         return f"Unexpected error: {str(e)}", 500
+
 
 # 웹 서버 실행
 if __name__ == "__main__":
