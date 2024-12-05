@@ -62,4 +62,7 @@ if __name__ == "__main__":
     print("Step 2: Simulating task execution.")
     function_selector = sys.argv[1] if len(sys.argv) > 1 else '1'
     os_selector = sys.argv[2] if len(sys.argv) > 2 else '1'
-    print(execute_db_task(function_selector, os_selector))
+
+    # execute_db_task 호출 후 터미널에 결과를 출력하지 않음
+    result = execute_db_task(function_selector, os_selector)
+    print("Execution complete.")  # 간단한 실행 완료 메시지만 출력
