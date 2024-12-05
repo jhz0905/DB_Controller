@@ -7,9 +7,8 @@ app = Flask(__name__)
 def run_db_controller():
     try:
         function_selector = request.form.get('function_selector')
+        os_selector = request.form.get('os_selector')
 
-        script_path = os.path.abspath("DB_Controller.py")
-        print("DB_Controller.py path:", script_path)
         if function_selector not in ['1', '2', '3']:
             return "Invalid function selector. Please select 1, 2, or 3.", 400
 
