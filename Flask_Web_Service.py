@@ -1,55 +1,46 @@
-from flask import Flask, render_template, request
-import subprocess, traceback, os
+from flask import Flask, request, jsonify
+import subprocess, os, traceback
 
-# Flask 애플리케이션 생성
 app = Flask(__name__)
-
-# 첫 번째 라우트 생성
-@app.route('/')
-def home():
-    return render_template('Console.html')
-
-# Flask 애플리케이션 생성 전 현재 작업 디렉토리를 스크립트 위치로 변경
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 @app.route('/run_db_controller', methods=['POST'])
 def run_db_controller():
     try:
-        # 디버깅 출력: 현재 작업 디렉토리
-        print("Current working directory:", os.getcwd())
+        function_selector = request.form.get('function_selector')
 
         script_path = os.path.abspath("DB_Controller.py")
         print("DB_Controller.py path:", script_path)
+        if function_selector not in ['1', '2', '3']:
+            return "Invalid function selector. Please select 1, 2, or 3.", 400
 
-        # UTF-8 환경 변수 설정
+        if os_selector not in ['1', '2']:
+            return "Invalid OS selector. Please choose 1 for IOS or 2 for IOS-XR.", 400
+
+        # 절대 경로로 DB_Controller.py 실행
+        script_path = os.path.abspath("DB_Controller_updated.py")
         env = os.environ.copy()
         env["PYTHONIOENCODING"] = "utf-8"
 
+        # DB_Controller.py 실행
         process = subprocess.run(
-            ["python", script_path],
+            ["python", script_path, function_selector, os_selector],
             capture_output=True,
             text=True,
-            encoding="utf8",
             env=env,
-            timeout = 30
+            timeout=30
         )
 
-        # 디버깅 출력: 실행 결과
-        print("STDOUT:", process.stdout)
-        print("STDERR:", process.stderr)
-
         if process.returncode != 0:
-            return f"Error in DB_Controller: <pre>{process.stderr or 'Unknown error'}</pre>", 500
-        return f"DB_Controller Output: <pre>{process.stdout or 'No output'}</pre>", 200
+            return f"Error in DB_Controller: <pre>{process.stderr}</pre>", 500
+
+        # 표준 출력 내용을 클라이언트로 반환
+        return jsonify({"output": process.stdout})
+
     except subprocess.TimeoutExpired:
-        print("Error: DB_Controller.py execution timed out.")
         return "Error: DB_Controller.py execution timed out.", 500
     except Exception as e:
-        print("An unexpected error occurred:")
         traceback.print_exc()
         return f"Unexpected error: {str(e)}", 500
 
-
-# 웹 서버 실행
 if __name__ == "__main__":
     app.run(host="10.12.100.150", port=5000, debug=True)
