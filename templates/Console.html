@@ -118,27 +118,49 @@
 </body>
 </html>
 <script>
-    // Handle user command
+    let step = 0; // 입력 단계를 추적 (0: function_selector, 1: os_selector)
+    let function_selector = ""; // 첫 번째 입력값 저장
+    let os_selector = ""; // 두 번째 입력값 저장
+
     async function handleCommand(command) {
         try {
-            if (command === 'start') {
-                // Send request to run DB_Controller
+            if (step === 0) {
+                function_selector = command; // 첫 번째 입력값 저장
+                addConsoleMessage(`Function Selector: ${function_selector}`);
+                addConsoleMessage('Please enter the OS selector (1 for IOS, 2 for IOS-XR):');
+                step = 1; // 다음 단계로 이동
+            } else if (step === 1) {
+                os_selector = command; // 두 번째 입력값 저장
+                addConsoleMessage(`OS Selector: ${os_selector}`);
+                addConsoleMessage('Executing command...');
+
+                // 서버로 데이터 전송
                 const response = await fetch('/run_db_controller', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ function_selector, os_selector }),
                 });
+
                 if (response.ok) {
                     const data = await response.json();
-                    addConsoleMessage(data.output); // Show backend response
+                    addConsoleMessage(data.output); // 서버 응답 출력
                 } else {
                     addConsoleMessage(`Error: Failed to execute command. Status: ${response.status}`);
                 }
+
+                // 초기화
+                step = 0;
+                addConsoleMessage('Please enter the function selector (1 for Query, 2 for Add, 3 for Delete):');
             } else {
-                addConsoleMessage(`Unknown command: "${command}"`);
+                addConsoleMessage('Unknown step.');
             }
         } catch (err) {
             addConsoleMessage('Error: Unable to connect to the server.');
         }
     }
+
+    // 콘솔 초기화 메시지
+    addConsoleMessage('Please enter the function selector (1 for Query, 2 for Add, 3 for Delete):');
 </script>
+
 
